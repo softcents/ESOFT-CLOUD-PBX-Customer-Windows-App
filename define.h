@@ -20,8 +20,11 @@
 #define _GLOBAL_RINGIN_WIDTH 180
 #define _GLOBAL_DIALER_WIDTH 162
 
-// BD PBX branding
-#define _GLOBAL_ICON "branding\\BD-PBX.ico"
+#define _GLOBAL_NAME_NICE "eSoft Cloud PBX"
+#define _GLOBAL_NAME_VISIBLE "eSoft Cloud PBX"
+
+// eSoft Cloud PBX branding
+#define _GLOBAL_ICON "branding\\eSoft-Cloud-PBX.ico"
 #define _GLOBAL_ICON_INACTIVE _GLOBAL_ICON
 
 #define _GLOBAL_HEIGHT1 0
@@ -42,13 +45,13 @@
 #define _GLOBAL_SETT_DENYINC_DEFAULT "button"
 #define _GLOBAL_SETT_AA_DEFAULT "button"
 #define _GLOBAL_BUSINESS_FEATURE "This feature is not available in the free version."
-#define _GLOBAL_MENU_WEBSITE "https://bdpbx.com"
-#define _GLOBAL_MENU_HELP "https://bdpbx.com"
-#define _GLOBAL_HELP_WEBSITE "https://bdpbx.com"
+#define _GLOBAL_MENU_WEBSITE "https://pbx.esoftbd.net"
+#define _GLOBAL_MENU_HELP "https://pbx.esoftbd.net"
+#define _GLOBAL_HELP_WEBSITE "https://pbx.esoftbd.net"
 #define _GLOBAL_URL_CHECK_VERSION ""
 #define _GLOBAL_EC_DEFAULT "1"
-#define _GLOBAL_NAME_NICE _GLOBAL_NAME
-#define _GLOBAL_NAME_VISIBLE _GLOBAL_NAME_NICE
+#define _GLOBAL_NAME_NICE "eSoft Cloud PBX"
+#define _GLOBAL_NAME_VISIBLE "eSoft Cloud PBX"
 #define _GLOBAL_CALL_PICKUP "**"
 #define _GLOBAL_SHORTCUTS
 #define _GLOBAL_SHORTCUTS_QTY 8
