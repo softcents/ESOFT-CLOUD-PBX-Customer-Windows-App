@@ -133,7 +133,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           Add-Type -AssemblyName System.Drawing
-          $exePath = (Resolve-Path 'artifacts\BD-PBX.exe').Path
+          $exePath = (Resolve-Path 'artifacts\eSoft-Cloud-PBX.exe').Path
           $icoPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-installer.ico'
           $bmpPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-wizard.bmp'
           $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($exePath)
@@ -173,7 +173,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
           if (-not (Test-Path $iscc)) { throw "Inno Setup compiler not found: $iscc" }
-          & $iscc 'installer\BD-PBX.iss'
+          & $iscc 'installer\eSoft-Cloud-PBX.iss'
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
           if (-not (Test-Path 'artifacts\eSoft-Cloud-PBX-Setup.exe')) { throw 'Installer was not produced.' }
 
