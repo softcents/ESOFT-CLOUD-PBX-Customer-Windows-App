@@ -55,7 +55,7 @@ jobs:
         working-directory: ..\pjproject
         run: msbuild pjproject-vs14.sln /m /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0 /p:RuntimeLibrary=MultiThreadedDLL
 
-      - name: Install PJSIP headers and libraries for BD PBX
+      - name: Install PJSIP headers and libraries
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -96,30 +96,14 @@ jobs:
           New-Item -ItemType Directory -Force -Path $libDir | Out-Null
           Copy-Item $opusLib.FullName (Join-Path $libDir 'opus.lib') -Force
 
-      - name: Verify build inputs and branding
-        shell: powershell
-        run: |
-          $parent = Split-Path $env:GITHUB_WORKSPACE -Parent
-          $libDir = Join-Path $parent 'lib'
-          foreach ($file in @((Join-Path $libDir 'opus.lib'),(Join-Path $libDir 'libpjproject-i386-Win32-vc14-Release-Static.lib'))) {
-            if (-not (Test-Path $file)) { throw "Missing required library: $file" }
-          }
-          $icon = Join-Path $env:GITHUB_WORKSPACE 'branding\BD-PBX.ico'
-          if (-not (Test-Path $icon)) { throw 'Missing eSoft Cloud PBX branding icon.' }
-
-      - name: Apply BD PBX fixed-domain UI/source patch
+      - name: Apply eSoft Cloud PBX source patches
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
           & (Join-Path $env:GITHUB_WORKSPACE 'tools\patch-bdpbx-domain.ps1')
-
-      - name: Disable BD PBX update checker and force website links
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
           & (Join-Path $env:GITHUB_WORKSPACE 'tools\patch-bdpbx-updates.ps1')
 
-      - name: Align BD PBX runtime with PJSIP and MFC
+      - name: Align runtime with PJSIP and MFC
         shell: powershell
         run: |
           $project = Join-Path $env:GITHUB_WORKSPACE 'microsip.vcxproj'
@@ -144,7 +128,7 @@ jobs:
           Copy-Item $exe.FullName 'artifacts/eSoft-Cloud-PBX.exe' -Force
           Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x86.exe' -OutFile 'artifacts/vc_redist.x86.exe' -UseBasicParsing
 
-      - name: Prepare BD PBX installer branding
+      - name: Prepare installer branding
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -153,7 +137,7 @@ jobs:
           $icoPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-installer.ico'
           $bmpPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-wizard.bmp'
           $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($exePath)
-          if (-not $icon) { throw 'Could not extract the BD PBX icon from the EXE.' }
+          if (-not $icon) { throw 'Could not extract the application icon from the EXE.' }
           try {
             $stream = [System.IO.File]::Open($icoPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write)
             try { $icon.Save($stream) } finally { $stream.Dispose() }
@@ -171,7 +155,7 @@ jobs:
                 try {
                   $brush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(40,40,40))
                   try {
-                    $text = 'BD PBX'
+                    $text = 'eSoft Cloud PBX'
                     $textSize = $g.MeasureString($text, $font)
                     $g.DrawString($text, $font, $brush, ($bmp.Width-$textSize.Width)/2, 210)
                   } finally { $brush.Dispose() }
@@ -183,7 +167,7 @@ jobs:
           if (-not (Test-Path $icoPath)) { throw 'Installer icon was not created.' }
           if (-not (Test-Path $bmpPath)) { throw 'Installer wizard branding image was not created.' }
 
-      - name: Build BD PBX installer
+      - name: Build eSoft Cloud PBX installer
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -193,13 +177,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
           if (-not (Test-Path 'artifacts\eSoft-Cloud-PBX-Setup.exe')) { throw 'Installer was not produced.' }
 
-      - name: Upload BD PBX EXE
+      - name: Upload eSoft Cloud PBX EXE
         uses: actions/upload-artifact@v4
         with:
           name: eSoft-Cloud-PBX-Windows
           path: artifacts/eSoft-Cloud-PBX.exe
 
-      - name: Upload BD PBX Installer
+      - name: Upload eSoft Cloud PBX Installer
         uses: actions/upload-artifact@v4
         with:
           name: eSoft-Cloud-PBX-Installer
