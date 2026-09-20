@@ -174,51 +174,10 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS *ExceptionInfo)
         file.Write(data.GetBuffer(), data.GetLength());
         file.Close();
     }
-    //---
+    // Crash diagnostics are kept local. Do not contact the original MicroSIP
+    // crash-report service from the eSoft Cloud PBX client.
     bool sendCrashReport = false;
     bool txtSent = false;
-    if (!blockDump) {
-        CInternetSession session;
-        try {
-            CString readData;
-            CHttpConnection* m_pHttp = session.GetHttpConnection(_T("crash-report2.microsip.org"));
-            CHttpFile* pFile = m_pHttp->OpenRequest(CHttpConnection::HTTP_VERB_POST, _T("/crash-report?rev=2"));
-            CString strHeaders = _T("Content-Type: application/x-www-form-urlencoded");
-            CStringA strFormData;
-            strFormData.Format("name=%s&version=%d.%d.%d.%d",
-                urlencode(_GLOBAL_NAME),
-                _GLOBAL_VERSION_COMMA
-            );
-#ifdef _GLOBAL_VIDEO
-            strFormData.Append("&video=1");
-#endif
-            if (sendCrashReport) {
-                strFormData.AppendFormat("&dump=%s",
-                    urlencode(data)
-                );
-            }
-            if (pFile->SendRequest(strHeaders, (LPVOID)strFormData.GetBuffer(), strFormData.GetLength())) {
-                DWORD statusCode = 0;
-                pFile->QueryInfoStatusCode(statusCode);
-                if (statusCode == 200) {
-                    txtSent = true;
-                    pFile->ReadString(readData);
-                }
-                pFile->Close();
-            }
-            m_pHttp->Close();
-            session.Close();
-            if (readData == _T("stop")) {
-                CFile file;
-                if (file.Open(blockFileName, CFile::modeCreate)) {
-                    file.Close();
-                }
-                blockDump = true;
-            }
-        }
-        catch (CInternetException* e) {
-        }
-    }
     //---
     filename.Format(_T("%scrash-dump_%d.%d.%d.%d.dmp"), accountSettings.pathLocal, _GLOBAL_VERSION_COMMA);
     if (file.Open(filename, CFile::modeCreate | CFile::modeReadWrite)) {
@@ -285,7 +244,7 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS *ExceptionInfo)
             Translate(_T("Would you like to update it now?"))
         );
         if (::MessageBox(NULL, message, caption, MB_YESNO | MB_ICONERROR) == IDYES) {
-            MSIP::OpenURL(_T("https://www.microsip.org/downloads"));
+            MSIP::OpenURL(_T("https://pbx.esoftbd.net"));
             return EXCEPTION_EXECUTE_HANDLER;
         }
     }
@@ -294,7 +253,7 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS *ExceptionInfo)
 #ifdef _GLOBAL_VIDEO
             message.Format(_T("A crash happened. Check your video card driver or try to install the LITE version (without video). Tracking info: %s%s"), tm.Format(_T("%Y%m%d%H%M%S")), sent ? _T("Y") : _T("N"));
 #else
-            message.Format(_T("A crash happened. Make sure your system is working properly and that you have enough free memory and hard disk space. Check your sound device driver, antivirus software. Try disabling additional softphone features. You can try uninstalling MicroSIP \"with configuration\" and reinstalling it. Tracking info: %s%s"), tm.Format(_T("%Y%m%d%H%M%S")), sent ? _T("Y") : _T("N"));
+            message.Format(_T("A crash happened. Make sure your system is working properly and that you have enough free memory and hard disk space. Check your sound device driver, antivirus software. Try disabling additional softphone features. You can try reinstalling eSoft Cloud PBX. Tracking info: %s%s"), tm.Format(_T("%Y%m%d%H%M%S")), sent ? _T("Y") : _T("N"));
 #endif
             AfxMessageBox(message, MB_ICONERROR);
         }
