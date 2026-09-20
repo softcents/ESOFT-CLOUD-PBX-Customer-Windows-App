@@ -31,7 +31,7 @@ Type: files; Name: "{autodesktop}\eSoft Cloud PBX.lnk"
 
 [Files]
 Source: "..\artifacts\eSoft-Cloud-PBX.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\branding\eSoft-Cloud-PBX.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\artifacts\eSoft-Cloud-PBX-installer.ico"; DestDir: "{app}"; DestName: "eSoft-Cloud-PBX.ico"; Flags: ignoreversion
 Source: "..\artifacts\vc_redist.x86.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 [Icons]
