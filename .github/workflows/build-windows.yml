@@ -1,4 +1,4 @@
-name: Build BD PBX Windows
+name: Build eSoft Cloud PBX Windows
 
 on:
   push:
@@ -105,7 +105,7 @@ jobs:
             if (-not (Test-Path $file)) { throw "Missing required library: $file" }
           }
           $icon = Join-Path $env:GITHUB_WORKSPACE 'branding\BD-PBX.ico'
-          if (-not (Test-Path $icon)) { throw 'Missing BD PBX branding icon.' }
+          if (-not (Test-Path $icon)) { throw 'Missing eSoft Cloud PBX branding icon.' }
 
       - name: Apply BD PBX fixed-domain UI/source patch
         shell: powershell
@@ -130,7 +130,7 @@ jobs:
           $text = $text -replace '<PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>', '<PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>'
           Set-Content -Path $project -Value $text -Encoding UTF8
 
-      - name: Build BD PBX
+      - name: Build eSoft Cloud PBX
         shell: cmd
         run: msbuild microsip.vcxproj /m /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0 /p:RuntimeLibrary=MultiThreadedDLL
 
@@ -139,9 +139,9 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $exe = Get-ChildItem -Path . -Filter microsip.exe -Recurse | Where-Object { $_.FullName -notmatch '\\microsip\\' } | Select-Object -First 1
-          if (-not $exe) { throw 'No microsip.exe was produced.' }
+          if (-not $exe) { throw 'No eSoft Cloud PBX executable was produced.' }
           New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-          Copy-Item $exe.FullName 'artifacts/BD-PBX.exe' -Force
+          Copy-Item $exe.FullName 'artifacts/eSoft-Cloud-PBX.exe' -Force
           Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x86.exe' -OutFile 'artifacts/vc_redist.x86.exe' -UseBasicParsing
 
       - name: Prepare BD PBX installer branding
@@ -150,8 +150,8 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Add-Type -AssemblyName System.Drawing
           $exePath = (Resolve-Path 'artifacts\BD-PBX.exe').Path
-          $icoPath = Join-Path (Resolve-Path 'artifacts').Path 'BD-PBX-installer.ico'
-          $bmpPath = Join-Path (Resolve-Path 'artifacts').Path 'BD-PBX-wizard.bmp'
+          $icoPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-installer.ico'
+          $bmpPath = Join-Path (Resolve-Path 'artifacts').Path 'eSoft-Cloud-PBX-wizard.bmp'
           $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($exePath)
           if (-not $icon) { throw 'Could not extract the BD PBX icon from the EXE.' }
           try {
@@ -191,16 +191,16 @@ jobs:
           if (-not (Test-Path $iscc)) { throw "Inno Setup compiler not found: $iscc" }
           & $iscc 'installer\BD-PBX.iss'
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
-          if (-not (Test-Path 'artifacts\BD-PBX-Setup.exe')) { throw 'Installer was not produced.' }
+          if (-not (Test-Path 'artifacts\eSoft-Cloud-PBX-Setup.exe')) { throw 'Installer was not produced.' }
 
       - name: Upload BD PBX EXE
         uses: actions/upload-artifact@v4
         with:
-          name: BD-PBX-Windows
-          path: artifacts/BD-PBX.exe
+          name: eSoft-Cloud-PBX-Windows
+          path: artifacts/eSoft-Cloud-PBX.exe
 
       - name: Upload BD PBX Installer
         uses: actions/upload-artifact@v4
         with:
-          name: BD-PBX-Installer
-          path: artifacts/BD-PBX-Setup.exe
+          name: eSoft-Cloud-PBX-Installer
+          path: artifacts/eSoft-Cloud-PBX-Setup.exe
