@@ -24,7 +24,7 @@
 #define _GLOBAL_NAME_VISIBLE "eSoft Cloud PBX"
 
 // eSoft Cloud PBX branding
-#define _GLOBAL_ICON "branding\\eSoft-Cloud-PBX.ico"
+#define _GLOBAL_ICON "branding\\BD-PBX.ico"
 #define _GLOBAL_ICON_INACTIVE _GLOBAL_ICON
 
 #define _GLOBAL_HEIGHT1 0
