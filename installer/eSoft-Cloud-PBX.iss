@@ -4,7 +4,7 @@
 #define MyAppExeName "eSoft-Cloud-PBX.exe"
 
 [Setup]
-AppId={{7D7E6E75-5F8C-4B0A-E5CF-3223}
+AppId={{7D7E6E75-5F8C-4B0A-E5CF-3223A1B9}
 AppName={#MyAppName}
 AppVerName={#MyAppName} {#MyAppVersion}
 AppVersion={#MyAppVersion}
